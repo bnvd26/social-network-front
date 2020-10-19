@@ -3,7 +3,8 @@
 		<b-navbar type="dark" variant="dark">
 			<b-navbar-nav>
 				<b-nav-item href="/home">Home</b-nav-item>
-				<b-nav-item href="/login">Login</b-nav-item>
+				<b-nav-item href="/friendlist">Amis</b-nav-item>
+				<b-nav-item href="/login">Se connecter</b-nav-item>
 			</b-navbar-nav>
 			<b-nav-form @submit="onSubmit">
 				<b-form-input v-model="form.s" class="mr-sm-2" placeholder="Search"></b-form-input>
@@ -12,6 +13,7 @@
 				>
 			</b-nav-form>
 			<b-navbar-nav>
+				<b-nav-item href="/me">Mon profil</b-nav-item>
 				<b-nav-item v-on:click="logout">Deconnexion</b-nav-item>
 			</b-navbar-nav>
 		</b-navbar>
@@ -39,6 +41,7 @@ export default {
 				})
 				.then(function(response) {
 					console.log(response.data)
+					this.$route.push('login');
 				})
 				.catch(function(error) {
 					console.log(error);
