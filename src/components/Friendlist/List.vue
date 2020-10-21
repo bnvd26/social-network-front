@@ -10,11 +10,7 @@
 			<button v-on:click="acceptUser" :value="requested_user.id">Ajouter</button>
 		</div>
 		<h1>Mes amis</h1>
-		<div v-for="user in users" :key="user.id" class="m-4">
-			{{ user.email }}
-			<button v-on:click="addUser" :value="user.id">Ajouter</button>
-		</div>
-		<div v-for="friend in friends" :key="friend.id" class="m-4">
+		<div v-for="friend in user.friends" :key="friend.id" class="m-4">
 			<b-card
 				border-variant="secondary"
 				header-border-variant="secondary"
@@ -29,52 +25,20 @@
 
 <script>
 import axios from "axios";
+import {mapState} from 'vuex';
 
 export default {
 	name: "List",
+	computed: mapState(['user']),
 	data() {
 		return {
-			friends: null,
-			users: null,
 			requested_users: null,
 		};
 	},
 	mounted() {
-		this.getFriends();
-		this.getUsers();
 		this.getRequestedUsers();
 	},
 	methods: {
-		getFriends() {
-			axios
-				.get("http://localhost:81/api/friends", {
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + localStorage.getItem("token"),
-					},
-				})
-				.then((response) => {
-					this.friends = response.data;
-				})
-				.catch(function(error) {
-					console.log(error);
-				});
-		},
-		getUsers() {
-			axios
-				.get("http://localhost:81/api/users", {
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + localStorage.getItem("token"),
-					},
-				})
-				.then((response) => {
-					this.users = response.data;
-				})
-				.catch(function(error) {
-					console.log(error);
-				});
-		},
 		addUser(evt) {
 			axios
 				.post(

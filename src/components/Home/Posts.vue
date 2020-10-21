@@ -21,23 +21,25 @@
 			</b-form>
 		</div>
 		<h1>Posts</h1>
-
-		<div v-for="post in posts" :key="post.id" class="m-4">
-			<b-card
-				border-variant="secondary"
-				:header="post.title"
-				header-border-variant="secondary"
-				align="center"
-			>
-				<b-card-text>{{ post.content }}</b-card-text>
-				<p class="font-italic">{{ post.author }}</p>
-			</b-card>
+		<div v-if="posts">
+			<div v-for="post in posts.data" :key="post.id" class="m-4">
+				<b-card
+					border-variant="secondary"
+					:header="post.title"
+					header-border-variant="secondary"
+					align="center"
+				>
+					<b-card-text>{{ post.content }}</b-card-text>
+					<p class="font-italic">{{ post.author }}</p>
+				</b-card>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 import axios from "axios";
+import {mapState} from 'vuex'
 
 export default {
 	name: "Posts",
@@ -47,12 +49,9 @@ export default {
 				content: "",
 			},
 			show: true,
-			posts: null,
 		};
 	},
-	mounted() {
-		this.getPosts();
-	},
+	computed: mapState(['posts']),
 	methods: {
 		onSubmit(evt) {
 			evt.preventDefault();
@@ -67,24 +66,6 @@ export default {
 						},
 					},
 				)
-				.then(function(response) {
-					console.log(response);
-				})
-				.catch(function(error) {
-					console.log(error);
-				});
-		},
-		getPosts() {
-			axios
-				.get("http://localhost:81/api/posts", {
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: "Bearer " + localStorage.getItem("token"),
-					},
-				})
-				.then((response) => {
-					this.posts = response.data;
-				})
 				.catch(function(error) {
 					console.log(error);
 				});
