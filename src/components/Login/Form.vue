@@ -1,38 +1,34 @@
 <template>
 	<div class="hello">
-		<h1>Je suis le component LOGIN</h1>
-		<b-form @submit="onSubmit" @reset="onReset" v-if="show">
-			<b-form-group
-				id="input-group-1"
-				label="Email address:"
-				label-for="input-1"
-			>
-				<b-form-input
-					id="input-1"
-					v-model="form.email"
+		<div id="login-card" class="card">
+			<div class="card-body">
+				<h2 class="text-center">Login form</h2>
+				<br>
+				<form @submit="onSubmit">
+					<div class="form-group">
+						<input v-model="form.email"
 					type="email"
 					required
-					placeholder="Enter email"
-				></b-form-input>
-			</b-form-group>
-
-			<b-form-group id="input-group-2" label="Mot de passe" label-for="input-2">
-				<b-form-input
-					id="input-2"
-					v-model="form.password"
+					placeholder="Enter email" class="form-control" id="email" name="email">
+					</div>
+					<div class="form-group">
+						<input type="password" class="form-control" id="email" placeholder="Enter password" name="pswd" v-model="form.password"
 					required
-					placeholder="Enter password"
-				></b-form-input>
-			</b-form-group>
-
-			<b-button type="submit" variant="primary">Submit</b-button>
-			<b-button type="reset" variant="danger">Reset</b-button>
-		</b-form>
+					>
+					</div>
+					<button type="submit" id="button" class="btn btn-primary deep-purple btn-block ">Submit</button>
+					<br>
+					<br>
+				</form>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script>
 import axios from "axios";
+import { mapState } from 'vuex';
+import {laravelEchoServer} from '../../services/laravelEchoServer';
 
 export default {
 	name: "Login",
@@ -48,6 +44,7 @@ export default {
 			show: true,
 		};
 	},
+	computed: mapState(['user']),
 	methods: {
 		onSubmit(evt) {
 			evt.preventDefault();
@@ -55,8 +52,16 @@ export default {
 				.post("http://localhost:81/api/login", JSON.stringify(this.form), {
 					headers: { "Content-Type": "application/json" },
 				})
-				.then(function(response) {
+				.then((response) => {
 					localStorage.setItem("token", response.data.access_token);
+					this.$store.dispatch('me');
+					this.$store.dispatch('friends');
+					this.$store.dispatch("posts");
+					this.$store.dispatch("myPosts");
+				}).then(() => {
+					let echoServer = new laravelEchoServer(this.user.me.id)
+					echoServer.connect()
+					this.$router.push('home')
 				})
 				.catch(function(error) {
 					console.log(error);
@@ -73,24 +78,6 @@ export default {
 				this.show = true;
 			});
 		},
-	},
+	}
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-	margin: 40px 0 0;
-}
-ul {
-	list-style-type: none;
-	padding: 0;
-}
-li {
-	display: inline-block;
-	margin: 0 10px;
-}
-a {
-	color: #42b983;
-}
-</style>

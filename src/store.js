@@ -9,7 +9,8 @@ export const store = new Vuex.Store({
 		user : {
 			me: [],
 			friends: [],
-			isAuthenticated: false
+			isAuthenticated: false,
+			isConnected: null,
 		},
 		posts : {
 			myPosts: [],
@@ -22,6 +23,9 @@ export const store = new Vuex.Store({
 		},
 		IS_AUTHENTICATED(state, isAuthenticated) {
 			state.user.isAuthenticated = isAuthenticated
+		},
+		IS_CONNECTED(state, isConnected) {
+			state.user.isConnected = isConnected
 		},
 		SAVE_POSTS(state, payload) {
 			state.posts.data = payload;
@@ -49,6 +53,9 @@ export const store = new Vuex.Store({
 			.catch(() => {
 				commit('IS_AUTHENTICATED', false);
 			});
+		},
+		connection({commit}) {
+			commit('IS_CONNECTED', true)
 		},
 		deconnection({commit}) {
 			commit('IS_AUTHENTICATED', false);
